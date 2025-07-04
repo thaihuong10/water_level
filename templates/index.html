@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chọn file Excel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f3f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      width: 100%;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      background-color: #4a00e0;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #3700b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Phân tích mực nước</h2>
+    <form method="post" enctype="multipart/form-data">
+      <label for="file">Chọn file Excel:</label>
+      <input type="file" name="file" id="file" required>
+      <button type="submit">Tiếp tục</button>
+    </form>
+  </div>
+</body>
+</html>

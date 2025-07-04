@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả phân tích</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      padding: 40px;
+    }
+
+    .container {
+      background: white;
+      max-width: 900px;
+      margin: auto;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-bottom: 30px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    select {
+      padding: 10px;
+      margin-left: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #4a00e0;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    canvas {
+      margin-top: 30px;
+    }
+
+    .no-data {
+      color: red;
+      font-style: italic;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Kết quả ngày {{ date }}</h2>
+
+    <!-- Chọn ngày khác -->
+    <form method="post">
+      <label>Chọn ngày khác:</label>
+      <select name="date" onchange="this.form.submit()">
+        {% for d in available_dates %}
+          <option value="{{ d }}" {% if d == date %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+      <input type="hidden" name="filename" value="{{ filename }}">
+    </form>
+
+    <!-- Nếu có dữ liệu -->
+    {% if labels and values %}
+      <p><strong>Mực nước cao nhất:</strong> {{ peak_value }}m tại:</p>
+      <ul>
+        {% for t in peak_times %}
+          <li>{{ t }}</li>
+        {% endfor %}
+      </ul>
+
+      <p><strong>Mực nước thấp nhất:</strong> {{ trough_value }}m tại:</p>
+      <ul>
+        {% for t in trough_times %}
+          <li>{{ t }}</li>
+        {% endfor %}
+      </ul>
+
+      <h3>Biểu đồ mực nước</h3>
+      <canvas id="waterChart" width="900" height="400"></canvas>
+
+      <script>
+        const ctx = document.getElementById("waterChart");
+        const labels = {{ labels|tojson }};
+        const data = {{ values|tojson }};
+        const peakTimes = {{ peak_times|tojson }};
+        const troughTimes = {{ trough_times|tojson }};
+
+        const pointColors = labels.map((t) => {
+          if (peakTimes.includes(t)) return 'red';
+          if (troughTimes.includes(t)) return 'green';
+          return 'blue';
+        });
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Mực nước (m)',
+              data: data,
+              borderColor: 'blue',
+              pointBackgroundColor: pointColors,
+              pointRadius: 4,
+              tension: 0.4,
+              fill: false
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Thời gian (giờ:phút)'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Mực nước (m)'
+                }
+              }
+            }
+          }
+        });
+      </script>
+    {% else %}
+      <p class="no-data">Không có dữ liệu để hiển thị biểu đồ cho ngày {{ date }}.</p>
+    {% endif %}
+
+    <a href="/">↩ Chọn file khác</a>
+  </div>
+</body>
+</html>
